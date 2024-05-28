@@ -195,14 +195,10 @@ public class DBContext {
     }
     
     public Product getProductByID(String productID) throws SQLException{
-        //ArrayList<Product> getProductByID = new ArrayList<>();
-       
-        
         String sql = " select * from Product where ProductID=?";
-        PreparedStatement statement = connection.prepareStatement(sql);
-       // ResultSet rs = statement.executeQuery();
-       statement.setString(1, productID);
-        
+        Product p = new Product();
+        try(PreparedStatement statement = connection.prepareStatement(sql);){
+            statement.setString(1, productID);
         ResultSet rs = statement.executeQuery();
         while(rs.next()){
             String id = rs.getString(1);
@@ -215,10 +211,10 @@ public class DBContext {
             String image3 = rs.getString(7);
             String image4 = rs.getString(8);
             String cateID = rs.getString(9);
-            Product p = new Product(id, name, detail, price,image1, image2, image3, image4, cateID);
-            return p;
+            p = new Product(id, name, detail, price,image1, image2, image3, image4, cateID);
         }
-        return null;
+        }
+        return p;
     }
     
     
