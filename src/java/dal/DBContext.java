@@ -77,18 +77,18 @@ public class DBContext {
         
         String sql = "select * from Category";
         try {
-             PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet rs = statement.executeQuery();
-        
-        while(rs.next()){
-            String id = rs.getString(1);
-            String name = rs.getString(2);
-            
-            Category c = new Category(id, name);
-            list.add(c);
-        }
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                ResultSet rs = statement.executeQuery();      
+                while(rs.next()){
+                    String id = rs.getString(1);
+                    String name = rs.getString(2);
+                    
+                    Category c = new Category(id, name);
+                    list.add(c);
+                }   }
         return list;
         } catch (SQLException e) {
+            e.getStackTrace();
         }
        return null;
     }
