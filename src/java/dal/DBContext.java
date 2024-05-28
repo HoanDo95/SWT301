@@ -76,7 +76,8 @@ public class DBContext {
         ArrayList<Category> list = new ArrayList<>();
         
         String sql = "select * from Category";
-        PreparedStatement statement = connection.prepareStatement(sql);
+        try {
+             PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet rs = statement.executeQuery();
         
         while(rs.next()){
@@ -87,6 +88,9 @@ public class DBContext {
             list.add(c);
         }
         return list;
+        } catch (SQLException e) {
+        }
+       return null;
     }
     
     
