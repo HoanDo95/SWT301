@@ -28,20 +28,19 @@ public class DBContext {
     protected Connection connection;
     public DBContext()
     {
-        //@Students: You are allowed to edit user, pass, url variables to fit 
-        //your system configuration
-        //You can also add more methods for Database Interaction tasks. 
-        //But we recommend you to do it in another class
-        // For example : StudentDBContext extends DBContext , 
-        //where StudentDBContext is located in dal package, 
         try {
-            String user = "sa";
-            String pass = "123";
-            String url = "jdbc:sqlserver://localhost\\SQLEXPRESS:1433;databaseName=Assignment";
+            String user = System.getenv("DB_USER");
+            String pass = System.getenv("DB_PASS");
+            String url = System.getenv("DB_URL");
+            if (user == null || pass == null || url == null) {
+                throw new IllegalStateException("Database credentials are not set in the environment variables.");
+            }
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalStateException ex) {
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, "Environment variables for database credentials are not set.", ex);
         }
     }
     
@@ -74,9 +73,7 @@ public class DBContext {
     
     public ArrayList<Category> listCategory() throws SQLException{
         ArrayList<Category> list = new ArrayList<>();
-        
         String sql = "select * from Category";
-        try {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 ResultSet rs = statement.executeQuery();      
                 while(rs.next()){
@@ -85,9 +82,10 @@ public class DBContext {
                     
                     Category c = new Category(id, name);
                     list.add(c);
-                }   }
-        return list;
-        } catch (SQLException e) {
+                }   
+                return list;
+            }
+         catch (SQLException e) {
             e.getStackTrace();
         }
        return null;
